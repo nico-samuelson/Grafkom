@@ -90,7 +90,7 @@ public class Object2d extends ShaderProgram {
         glPointSize(0); // besar kecil vertex
         // wajib
         // GL_LINE, GL_LINE_STRIP, GL_lINE_LOOP, GL_TRIANGLES, GL_TRIANGLE_FAN, GL_POINT -> YG SERING DIPAKAI
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        glDrawArrays(GL_TRIANGLE_FAN, 0, vertices.size());
     }
 
     public void drawWithVerticesColor() {

@@ -31,6 +31,18 @@ public class Rectangle extends Object2d {
         // wajib
         // GL_LINE, GL_LINE_STRIP, GL_lINE_LOOP, GL_TRIANGLES, GL_TRIANGLE_FAN, GL_POINT -> YG SERING DIPAKAI
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-        glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLE_FAN, index.size(), GL_UNSIGNED_INT, 0);
+    }
+
+    public void drawStars() {
+        drawSetup();
+
+        // optional
+        glLineWidth(1); // ketebalan garis
+        glPointSize(0); // besar kecil vertex
+        // wajib
+        // GL_LINE, GL_LINE_STRIP, GL_lINE_LOOP, GL_TRIANGLES, GL_TRIANGLE_FAN, GL_POINT -> YG SERING DIPAKAI
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+        glDrawElements(GL_LINE_LOOP, index.size(), GL_UNSIGNED_INT, 0);
     }
 }
