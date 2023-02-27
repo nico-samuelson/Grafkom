@@ -10,7 +10,7 @@ import static org.lwjgl.opengl.GL15.*;
 
 public class Object2d extends ShaderProgram {
 
-    List<Vector3f> vertices, verticesColor;
+    public List<Vector3f> vertices, verticesColor;
     int vao, vbo, vboColor;
     UniformsMap uniformsMap;
     Vector4f color;
@@ -91,6 +91,18 @@ public class Object2d extends ShaderProgram {
         // wajib
         // GL_LINE, GL_LINE_STRIP, GL_lINE_LOOP, GL_TRIANGLES, GL_TRIANGLE_FAN, GL_POINT -> YG SERING DIPAKAI
         glDrawArrays(GL_TRIANGLE_FAN, 0, vertices.size());
+    }
+
+    public void drawLine() {
+        drawSetup();
+        glLineWidth(1);
+        glPointSize(0);
+        glDrawArrays(GL_LINE_STRIP, 0, vertices.size());
+    }
+
+    public void addVertices(Vector3f newVertices) {
+        vertices.add(newVertices);
+        setupVAOVBO();
     }
 
     public void drawWithVerticesColor() {

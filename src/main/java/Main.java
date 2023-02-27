@@ -1,4 +1,5 @@
 import Engine.*;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL;
@@ -13,12 +14,13 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class Main {
 
-    private Window window = new Window(800, 800, "Hello World");
+    private Window window = new Window(600, 600, "Hello World");
 //    UniformsMap uniformsMap;
     private ArrayList<Object2d> objects = new ArrayList<>();
     private ArrayList<Object2d> objectsRectangle = new ArrayList<>();
     private ArrayList<Rectangle> stars = new ArrayList<>();
     private List<Vector3f> circle = new ArrayList<>();
+    private ArrayList<Object2d> objectsPointsControl = new ArrayList<>();
 
     public void init() {
         window.init();
@@ -241,6 +243,19 @@ public class Main {
 //                        )
 //                )
 //        ));
+
+//        objectsPointsControl.add(new Rectangle(
+//                Arrays.asList(
+//                        // shaderFile lokasi menyesuaikan objectnya
+//                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
+//                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
+//                ),
+//                new ArrayList<>(),
+//                new Vector4f(0, 1, 1, 1),
+//                Arrays.asList(0, 1, 2, 0, 2, 3)
+//        ));
+
+
     }
 
     public static List<Vector3f> createCircle(float x, float y, float rx, float ry, double inc) {
@@ -256,15 +271,100 @@ public class Main {
         return circle;
     }
 
+    public void input() {
+        if (window.isKeyPressed(GLFW_KEY_W)) {
+            System.out.println("W");
+        }
+        if (window.getMouseInput().isLeftButtonPressed()) {
+            Vector2f pos = window.getMouseInput().getCurrentPos();
+
+            pos.x = (pos.x - (window.getWidth()) / 2.0f) / (window.getWidth() / 2.0f);
+            pos.y = (pos.y - (window.getHeight()) / 2.0f) / (-window.getHeight() / 2.0f);
+
+            if ((!(pos.x > 1 || pos.x < -0.97) && !(pos.y > 0.97 || pos.y < -1))) {
+//                System.out.println("x : " + pos.x + " y : " + pos.y);
+//                objectsPointsControl.get(0).addVertices(new Vector3f(pos.x, pos.y, 0));
+
+                if (!checkOverlaps(pos, objectsPointsControl)) {
+//                    System.out.println("tes");
+                    objectsPointsControl.add(new Rectangle(
+                            Arrays.asList(
+                                    // shaderFile lokasi menyesuaikan objectnya
+                                    new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
+                                    new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
+                            ),
+                            new ArrayList<>(
+                                    List.of(
+                                            new Vector3f(pos.x + 0.1f, pos.y - 0.1f, 0),
+                                            new Vector3f(pos.x + 0.1f, pos.y + 0.1f, 0),
+                                            new Vector3f(pos.x - 0.1f, pos.y + 0.1f, 0),
+                                            new Vector3f(pos.x - 0.1f, pos.y - 0.1f, 0)
+                                    )
+                            ),
+                            new Vector4f(0, 1, 1, 1),
+                            Arrays.asList(0, 1, 2, 0, 2, 3)
+                    ));
+
+
+                }
+            }
+        }
+
+        if(!window.getMouseInput().isLeftButtonReleased()) {
+            Vector2f pos = window.getMouseInput().getCurrentPos();
+
+            pos.x = (pos.x - (window.getWidth()) / 2.0f) / (window.getWidth() / 2.0f);
+            pos.y = (pos.y - (window.getHeight()) / 2.0f) / (-window.getHeight() / 2.0f);
+
+            Object2d rectangle = getRectangle(pos, objectsPointsControl);
+
+            if (rectangle != null) {
+                rectangle.vertices.set(0, new Vector3f(pos.x + 0.1F, pos.y - 0.1f, 0));
+                rectangle.vertices.set(1, new Vector3f(pos.x + 0.1F, pos.y + 0.1f, 0));
+                rectangle.vertices.set(2, new Vector3f(pos.x - 0.1F, pos.y + 0.1f, 0));
+                rectangle.vertices.set(3, new Vector3f(pos.x - 0.1F, pos.y - 0.1f, 0));
+            }
+        }
+    }
+
+    public boolean checkOverlaps(Vector2f pos, ArrayList<Object2d> objects) {
+        boolean collisionX = false;
+        boolean collisionY = false;
+
+        for (Object2d object : objects) {
+            collisionX = (pos.x + 0.1f <= object.vertices.get(2).x + 0.2f && object.vertices.get(2).x <= pos.x + 0.1f) ||
+                    (pos.x - 0.1f <= object.vertices.get(2).x + 0.2f && object.vertices.get(2).x <= pos.x + 0.1f);
+            collisionY = (pos.y + 0.1f <= object.vertices.get(3).y + 0.2f && object.vertices.get(3).y <= pos.y + 0.1f) ||
+                    (pos.y - 0.1f <= object.vertices.get(3).y + 0.2f && object.vertices.get(3).y <= pos.y + 0.1f);
+            if (collisionX && collisionY)
+                break;
+        }
+        return collisionX && collisionY;
+    }
+
+    public Object2d getRectangle(Vector2f pos, ArrayList<Object2d> objects) {
+        boolean collisionX;
+        boolean collisionY;
+
+        for (Object2d object : objects) {
+            collisionX = (pos.x + 0.1f <= object.vertices.get(2).x + 0.2f && object.vertices.get(2).x <= pos.x + 0.1f) ||
+                    (pos.x - 0.1f <= object.vertices.get(2).x + 0.2f && object.vertices.get(2).x <= pos.x + 0.1f);
+            collisionY = (pos.y + 0.1f <= object.vertices.get(3).y + 0.2f && object.vertices.get(3).y <= pos.y + 0.1f) ||
+                    (pos.y - 0.1f <= object.vertices.get(3).y + 0.2f && object.vertices.get(3).y <= pos.y + 0.1f);
+            if (collisionX && collisionY)
+                return object;
+        }
+        return null;
+    }
+
     public void loop() {
         while(window.isOpen()) {
             window.update();
             glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
             GL.createCapabilities();
+            input();
 
             // code
-
-
             for (Object2d object : objectsRectangle)
                 object.draw();
 
@@ -273,6 +373,9 @@ public class Main {
 
             for (Rectangle object : stars)
                 object.drawStars();
+
+            for (Object2d object : objectsPointsControl)
+                object.draw();
 
             // Restore state
             glDisableVertexAttribArray(0);
