@@ -21,7 +21,7 @@ public class Main {
 //    private ArrayList<Rectangle> stars = new ArrayList<>();
 //    private List<Vector3f> circle = new ArrayList<>();
     private ArrayList<Object2d> objectsPointsControl = new ArrayList<>();
-    private ArrayList<Object2d> lines = new ArrayList<>();
+    private Object2d controlLine;
     private ArrayList<Object2d> curves = new ArrayList<>();
     private ArrayList<Vector3f> center = new ArrayList<>();
 
@@ -258,7 +258,6 @@ public class Main {
 //                Arrays.asList(0, 1, 2, 0, 2, 3)
 //        ));
 
-
     }
 
     public static List<Vector3f> createCircle(float x, float y, float rx, float ry, double inc) {
@@ -291,6 +290,7 @@ public class Main {
 
                 // gambar
                 if (objectsPointsControl.isEmpty() || checkOverlaps(pos) == -1) {
+
                     // kotak
                     objectsPointsControl.add(new Rectangle(
                             Arrays.asList(
@@ -312,75 +312,32 @@ public class Main {
 
                     center.add(new Vector3f(pos.x, pos.y, 0));
 
+                    // garis
+                    controlLine = new Object2d(
+                            Arrays.asList(
+                                    // shaderFile lokasi menyesuaikan objectnya
+                                    new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
+                                    new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
+                            ),
+                            center,
+                            new Vector4f(1, 1, 1, 1)
+                    );
 
-                    // gambar garis
-                    if (objectsPointsControl.size() > 1) {
-                        int size = objectsPointsControl.size();
-
-                        lines.add(new Object2d(
-                                Arrays.asList(
-                                        // shaderFile lokasi menyesuaikan objectnya
-                                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
-                                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
-                                ),
-                                new ArrayList<>(
-                                        List.of(
-                                                new Vector3f(objectsPointsControl.get(size - 2).vertices.get(0).x - 0.05f,
-                                                        objectsPointsControl.get(size - 2).vertices.get(0).y + 0.05f,
-                                                        0),
-                                                new Vector3f(objectsPointsControl.get(size - 1).vertices.get(0).x - 0.05f,
-                                                        objectsPointsControl.get(size - 1).vertices.get(0).y + 0.05f,
-                                                        0)
-                                        )
-                                ),
-                                new Vector4f(1, 1, 1, 1)
-                        ));
-
-                        lines.get(lines.size() - 1).setupVAOVBO();
-                    }
                     objectsPointsControl.get(objectsPointsControl.size() - 1).setupVAOVBO();
-
+                    controlLine.setupVAOVBO();
                 }
 
                 // drag n drop
                 if (!objectsPointsControl.isEmpty() && checkOverlaps(pos) != -1) {
                     int clickedBox = checkOverlaps(pos);
-                    int clickedLine = clickedBox == 0 ? 0 : clickedBox - 1;
-
                     objectsPointsControl.get(clickedBox).vertices.set(0, new Vector3f(pos.x + 0.05f, pos.y - 0.05f, 0));
                     objectsPointsControl.get(clickedBox).vertices.set(1, new Vector3f(pos.x + 0.05f, pos.y + 0.05f, 0));
                     objectsPointsControl.get(clickedBox).vertices.set(2, new Vector3f(pos.x - 0.05f, pos.y + 0.05f, 0));
                     objectsPointsControl.get(clickedBox).vertices.set(3, new Vector3f(pos.x - 0.05f, pos.y - 0.05f, 0));
                     objectsPointsControl.get(clickedBox).setupVAOVBO();
                     center.set(clickedBox, new Vector3f(pos.x, pos.y, 0));
-
-                    if (clickedLine >= 0 && clickedBox > 0) {
-                        lines.get(clickedLine).vertices.set(1, new Vector3f(
-                                objectsPointsControl.get(clickedBox).vertices.get(0).x - 0.05f,
-                                objectsPointsControl.get(clickedBox).vertices.get(0).y + 0.05f,
-                                0)
-                                );
-                        if (clickedLine + 1 < lines.size()) {
-                            lines.get(clickedLine + 1).vertices.set(0, new Vector3f(
-                                    objectsPointsControl.get(clickedBox).vertices.get(0).x - 0.05f,
-                                    objectsPointsControl.get(clickedBox).vertices.get(0).y + 0.05f,
-                                    0)
-                            );
-                            lines.get(clickedLine + 1).setupVAOVBO();
-                        }
-                        lines.get(clickedLine).setupVAOVBO();
-                    }
-
-                    else if (clickedLine == 0 && clickedBox == 0 && !lines.isEmpty()) {
-                        lines.get(0).vertices.set(0, new Vector3f(
-                                objectsPointsControl.get(0).vertices.get(0).x - 0.05f,
-                                objectsPointsControl.get(0).vertices.get(0).y + 0.05f,
-                                0)
-                        );
-                        lines.get(0).setupVAOVBO();
-                    }
+                    controlLine.setupVAOVBO();
                 }
-//                System.out.println(center);
             }
         }
     }
@@ -471,8 +428,8 @@ public class Main {
 //            for (Rectangle object : stars)
 //                object.drawStars();
 
-            for (Object2d object : lines)
-                object.drawLine();
+            if (controlLine != null)
+                controlLine.drawLine();
 
             for (Object2d object : curves)
                 object.drawLine();
