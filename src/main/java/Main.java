@@ -1,13 +1,12 @@
 import Engine.*;
+import Engine.Object;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL30.*;
@@ -16,18 +15,37 @@ public class Main {
 
     private Window window = new Window(600, 600, "Hello World");
 //        UniformsMap uniformsMap;
-//    private ArrayList<Object2d> objects = new ArrayList<>();
+    private ArrayList<Object> objects = new ArrayList<>();
 //    private ArrayList<Object2d> objectsRectangle = new ArrayList<>();
 //    private ArrayList<Rectangle> stars = new ArrayList<>();
 //    private List<Vector3f> circle = new ArrayList<>();
-    private ArrayList<Object2d> objectsPointsControl = new ArrayList<>();
-    private Object2d controlLine;
-    private ArrayList<Object2d> curves = new ArrayList<>();
+    private ArrayList<Object> objectsPointsControl = new ArrayList<>();
+    private Object controlLine;
+    private ArrayList<Object> curves = new ArrayList<>();
     private ArrayList<Vector3f> center = new ArrayList<>();
+    Sphere kotak;
 
     public void init() {
         window.init();
         GL.createCapabilities();
+
+        kotak = new Sphere(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(
+                        List.of()
+                ),
+                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
+                new Vector3f(0, 0, 0),
+                .5f,
+                .5f,
+                .5f,
+                0, 0
+        );
+
+        kotak.createEllipsoid();
 
         // rumput
 //        objectsRectangle.add(new Rectangle(
@@ -258,6 +276,22 @@ public class Main {
 //                Arrays.asList(0, 1, 2, 0, 2, 3)
 //        ));
 
+//        objects.add(new Object(
+//                Arrays.asList(
+//                        // shaderFile lokasi menyesuaikan objectnya
+//                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
+//                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
+//                ),
+//                new ArrayList<>(
+//                        List.of(
+//                                new Vector3f(0.5f, 0.5f, 0),
+//                                new Vector3f(0.5f, -0.5f, 0),
+//                                new Vector3f(-0.5f, -0.5f, 0),
+//                                new Vector3f(-0.5f, 0.5f, 0)
+//                        )
+//                ),
+//                new Vector4f(1, 1, 0, 1)
+//        ));
     }
 
     public static List<Vector3f> createCircle(float x, float y, float rx, float ry, double inc) {
@@ -313,7 +347,7 @@ public class Main {
                     center.add(new Vector3f(pos.x, pos.y, 0));
 
                     // garis
-                    controlLine = new Object2d(
+                    controlLine = new Object(
                             Arrays.asList(
                                     // shaderFile lokasi menyesuaikan objectnya
                                     new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
@@ -346,7 +380,7 @@ public class Main {
         int index = 0;
         int collapse = -1;
 
-        for (Object2d object : objectsPointsControl) {
+        for (Object object : objectsPointsControl) {
             boolean collisionX = (pos.x + 0.05f <= object.vertices.get(2).x + 0.1f && object.vertices.get(2).x <= pos.x + 0.05f) ||
                     (pos.x - 0.05f <= object.vertices.get(2).x + 0.1f && object.vertices.get(2).x <= pos.x + 0.05f);
             boolean collisionY = (pos.y + 0.05f <= object.vertices.get(3).y + 0.1f && object.vertices.get(3).y <= pos.y + 0.05f) ||
@@ -399,7 +433,7 @@ public class Main {
                 points.add(new Vector3f(x, y, 0));
             }
 
-            curves.add(new Object2d(
+            curves.add(new Object(
                     Arrays.asList(
                             new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
                             new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
@@ -413,8 +447,10 @@ public class Main {
     public void loop() {
         while (window.isOpen()) {
             window.update();
-            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
             GL.createCapabilities();
+
+            kotak.drawLine();
             input();
             curve();
 
@@ -422,20 +458,23 @@ public class Main {
 //            for (Object2d object : objectsRectangle)
 //                object.draw();
 //
-//            for (Object2d object : objects)
+//            for (Object object : objects)
 //                object.draw();
 //
+
 //            for (Rectangle object : stars)
 //                object.drawStars();
 
-            if (controlLine != null)
-                controlLine.drawLine();
+//            if (controlLine != null)
+//                controlLine.drawLine();
 
-            for (Object2d object : curves)
-                object.drawLine();
+//            for (Object object : curves)
+//                object.drawLine();
+//
+//            for (Object object : objectsPointsControl)
+//                object.draw();
 
-            for (Object2d object : objectsPointsControl)
-                object.draw();
+
 
             // Restore state
             glDisableVertexAttribArray(0);

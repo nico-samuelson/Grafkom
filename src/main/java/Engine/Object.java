@@ -6,16 +6,15 @@ import org.joml.Vector4f;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.opengl.GL15.*;
 
-public class Object2d extends ShaderProgram {
+public class Object extends ShaderProgram {
 
     public List<Vector3f> vertices, verticesColor;
     int vao, vbo, vboColor;
     UniformsMap uniformsMap;
     Vector4f color;
 
-    public Object2d(List<ShaderModuleData> shaderModuleDataList, List<Vector3f> vertices, Vector4f color) {
+    public Object(List<ShaderModuleData> shaderModuleDataList, List<Vector3f> vertices, Vector4f color) {
         super(shaderModuleDataList);
         this.vertices = vertices;
         setupVAOVBO();
@@ -24,7 +23,7 @@ public class Object2d extends ShaderProgram {
         this.color = color;
     }
 
-    public Object2d(List<ShaderModuleData> shaderModuleDataList, List<Vector3f> vertices, List<Vector3f> verticesColor) {
+    public Object(List<ShaderModuleData> shaderModuleDataList, List<Vector3f> vertices, List<Vector3f> verticesColor) {
         super(shaderModuleDataList);
         this.vertices = vertices;
         this.verticesColor = verticesColor;
