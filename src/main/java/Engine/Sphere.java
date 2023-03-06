@@ -169,7 +169,7 @@ public class Sphere extends Circle {
                 float x = radiusX * (float) ((1 / Math.cos(v)) * Math.cos(u));
                 float y = radiusY * (float) ((1 / Math.cos(v)) * Math.sin(u));
                 float z = radiusZ * (float) (Math.tan(v));
-                temp.add(new Vector3f(x, y, z));
+                temp.add(new Vector3f(x, z, y));
             }
         }
 
@@ -186,12 +186,63 @@ public class Sphere extends Circle {
                 float x = radiusX * (float) (Math.tan(v) * Math.cos(u1));
                 float y = radiusY * (float) (Math.tan(v) * Math.sin(u1));
                 float z = radiusZ * (float) (1/ Math.cos(v));
-                temp.add(new Vector3f(x, y, z));
+                temp.add(new Vector3f(x, z, y));
             }
             for (double u2 = Math.PI/2; u2 <= 3 * Math.PI/2; u2 += Math.PI/60) {
                 float x = radiusX * (float) (Math.tan(v) * Math.cos(u2));
                 float y = radiusY * (float) (Math.tan(v) * Math.sin(u2));
                 float z = radiusZ * (float) (1/ Math.cos(v));
+                temp.add(new Vector3f(x, z, y));
+            }
+        }
+
+        vertices.clear();
+        vertices.addAll(temp);
+        setupVAOVBO();
+    }
+
+    public void createEllipticCone() {
+        ArrayList<Vector3f> temp = new ArrayList<>();
+
+        for (double v = -Math.PI/2; v <= Math.PI/2; v+= Math.PI/100) {
+            for (double u = -Math.PI; u <= Math.PI; u += Math.PI/60) {
+                float x = radiusX * (float) (v * Math.cos(u));
+                float y = radiusY * (float) (v * Math.sin(u));
+                float z = radiusZ * (float) v;
+                temp.add(new Vector3f(x, z, y));
+            }
+        }
+
+        vertices.clear();
+        vertices.addAll(temp);
+        setupVAOVBO();
+    }
+
+    public void createEllipticParaboloid() {
+        ArrayList<Vector3f> temp = new ArrayList<>();
+
+        for (double v = Math.PI; v >= 0; v-= Math.PI/60) {
+            for (double u = -Math.PI; u <= Math.PI; u += Math.PI/60) {
+                float x = radiusX * (float) (v * Math.cos(u));
+                float y = radiusY * (float) (v * Math.sin(u));
+                float z = (float) (v * v);
+                temp.add(new Vector3f(x, z, y));
+            }
+        }
+
+        vertices.clear();
+        vertices.addAll(temp);
+        setupVAOVBO();
+    }
+
+    public void createHyperboloidParaboloid() {
+        ArrayList<Vector3f> temp = new ArrayList<>();
+
+        for (double v = Math.PI; v >= 0; v-= Math.PI/60) {
+            for (double u = -Math.PI; u <= Math.PI; u += Math.PI/60) {
+                float x = radiusX * (float) (v * Math.tan(u));
+                float y = radiusY * (float) (v * (1 / Math.cos(u)));
+                float z = (float) (v * v);
                 temp.add(new Vector3f(x, y, z));
             }
         }

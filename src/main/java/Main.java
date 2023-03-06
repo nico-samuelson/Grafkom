@@ -38,14 +38,14 @@ public class Main {
                         List.of()
                 ),
                 new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
-                new Vector3f(0, 0, 0),
-                .5f,
-                .5f,
-                .5f,
+                new Vector3f(-0.5f, -0.5f, -0.5f),
+                .4f,
+                .4f,
+                .4f,
                 0, 0
         );
 
-        kotak.createEllipsoid();
+        kotak.createEllipticCone();
 
         // rumput
 //        objectsRectangle.add(new Rectangle(
