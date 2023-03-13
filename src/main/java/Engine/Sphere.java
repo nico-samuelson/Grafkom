@@ -2,6 +2,7 @@ package Engine;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import static org.lwjgl.opengl.GL30.*;
 
@@ -9,11 +10,14 @@ public class Sphere extends Circle {
     float radiusZ;
     int sectorCount, stackCount;
 
+    public int currAngle;
+
     public Sphere(List<ShaderModuleData> shaderModuleDataList, List<Vector3f> vertices, Vector4f color, Vector3f centerPoint, float radiusX, float radiusY, float radiusZ, int sectorCount, int stackCount) {
         super(shaderModuleDataList, vertices, color, centerPoint, radiusX, radiusY);
         this.radiusZ = radiusZ;
         this.sectorCount = sectorCount;
         this.stackCount = stackCount;
+        this.currAngle = 0;
     }
 
     public void createBox() {

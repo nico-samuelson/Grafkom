@@ -12,9 +12,9 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class Circle extends Object {
 
-    Vector3f centerPoint;
-    float radiusX;
-    float radiusY;
+    public Vector3f centerPoint;
+    public float radiusX;
+    public float radiusY;
 
     public Circle(List<ShaderModuleData> shaderModuleDataList, List<Vector3f> vertices, Vector4f color, Vector3f centerPoint, float radiusX, float radiusY) {
         super(shaderModuleDataList, vertices, color);

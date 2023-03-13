@@ -23,13 +23,33 @@ public class Main {
     private Object controlLine;
     private ArrayList<Object> curves = new ArrayList<>();
     private ArrayList<Vector3f> center = new ArrayList<>();
+    ArrayList<Sphere> planets = new ArrayList<>();
     Sphere kotak;
 
     public void init() {
         window.init();
         GL.createCapabilities();
 
-        kotak = new Sphere(
+//        kotak = new Sphere(
+//                Arrays.asList(
+//                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
+//                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
+//                ),
+//                new ArrayList<>(
+//                        List.of()
+//                ),
+//                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
+//                new Vector3f(0f, 0f, 0f),
+//                .4f,
+//                .4f,
+//                .4f,
+//                36, 18
+//        );
+//
+////        kotak.rotateObject(2f, 2f, 2f);
+//
+//        kotak.create();
+        planets.add(new Sphere(
                 Arrays.asList(
                         new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
                         new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
@@ -37,16 +57,122 @@ public class Main {
                 new ArrayList<>(
                         List.of()
                 ),
-                new Vector4f(1.0f, 1.0f, 1.0f, 1.0f),
-                new Vector3f(-0.5f, -0.5f, -0.5f),
-                .4f,
-                .4f,
-                .4f,
-                0, 0
-        );
+                new Vector4f(0, 1, 0, 1.0f),
+                new Vector3f(0f, 0f, 0f),
+                .3f,
+                .3f,
+                .3f,
+                36, 18
+        ));
+        planets.get(0).createSphere();
 
-        kotak.createEllipticCone();
+        planets.add(new Sphere(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(
+                        List.of()
+                ),
+                new Vector4f(1, 1, 1, 1.0f),
+                new Vector3f(-0.4f, 0f, 0f),
+                .05f,
+                .05f,
+                .05f,
+                36, 18
+        ));
 
+        planets.get(1).createSphere();
+
+        planets.add(new Sphere(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(
+                        List.of()
+                ),
+                new Vector4f(1, 0.7f, 0, 1.0f),
+                new Vector3f(-0.55f, 0f, 0f),
+                .05f,
+                .05f,
+                .05f,
+                36, 18
+        ));
+
+        planets.get(2).createSphere();
+
+        planets.add(new Sphere(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(
+                        List.of()
+                ),
+                new Vector4f(0, 0, 1, 1.0f),
+                new Vector3f(-0.7f, 0f, 0f),
+                .05f,
+                .05f,
+                .05f,
+                36, 18
+        ));
+
+        planets.get(3).createSphere();
+
+        planets.add(new Sphere(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(
+                        List.of()
+                ),
+                new Vector4f(1, 0.7f, 0, 1.0f),
+                new Vector3f(-0.85f, 0f, 0f),
+                .05f,
+                .05f,
+                .05f,
+                36, 18
+        ));
+
+        planets.get(4).createSphere();
+
+        planets.add(new Sphere(
+                Arrays.asList(
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
+                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
+                ),
+                new ArrayList<>(
+                        List.of()
+                ),
+                new Vector4f(1, 0.7f, 0, 1.0f),
+                new Vector3f(-0.95f, 0f, 0f),
+                .025f,
+                .025f,
+                .025f,
+                36, 18
+        ));
+
+        planets.get(5).createSphere();
+
+//        planets.add(new Sphere(
+//                Arrays.asList(
+//                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
+//                        new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
+//                ),
+//                new ArrayList<>(
+//                        List.of()
+//                ),
+//                new Vector4f(1, 1, 1, 1.0f),
+//                new Vector3f(-0.5f, 0f, 0f),
+//                .1f,
+//                .1f,
+//                .1f,
+//                36, 18
+//        ));
+//
+//        planets.get(1).createSphere();
         // rumput
 //        objectsRectangle.add(new Rectangle(
 //                Arrays.asList(
@@ -308,8 +434,44 @@ public class Main {
     }
 
     public void input() {
-        if (window.isKeyPressed(GLFW_KEY_W)) {
-            System.out.println("W");
+        // revolusi
+        if (window.isKeyPressed(GLFW_KEY_F)) {
+            for (int i = 1; i < planets.size() - 1; i++)
+                planets.get(i).rotateObject((float)Math.toRadians(0.5f), 0, 0, 1);
+        }
+
+        // rotasi
+        if (window.isKeyPressed(GLFW_KEY_G)) {
+            for (int i = 1; i < planets.size(); i++) {
+                planets.get(i).translateObject(
+                        -planets.get(i).centerPoint.x,
+                        -planets.get(i).centerPoint.y,
+                        -planets.get(i).centerPoint.z
+                );
+
+                planets.get(i).rotateObject((float) Math.toRadians(0.5f), 0f, 1f, 0f);
+
+                planets.get(i).centerPoint.x = planets.get(i).radiusX * (float)(Math.cos(Math.toRadians(planets.get(i).currAngle)));
+                planets.get(i).centerPoint.y = planets.get(i).radiusY * (float)(Math.sin(Math.toRadians(planets.get(i).currAngle)));
+
+                if (planets.get(i).currAngle + 1 < 360)
+                    planets.get(i).currAngle++;
+                else
+                    planets.get(i).currAngle = 0;
+
+                System.out.println(planets.get(i).centerPoint);
+
+                planets.get(i).translateObject(
+                        planets.get(i).centerPoint.x,
+                        planets.get(i).centerPoint.y,
+                        planets.get(i).centerPoint.z
+                );
+            }
+        }
+
+        // bulan
+        if (window.isKeyPressed(GLFW_KEY_H)) {
+            planets.get(5).rotateObject((float)Math.toRadians(0.5f), 0, 0, 1);
         }
         if (window.getMouseInput().isLeftButtonPressed()) {
             Vector2f pos = window.getMouseInput().getCurrentPos();
@@ -447,14 +609,17 @@ public class Main {
     public void loop() {
         while (window.isOpen()) {
             window.update();
-            glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
+            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
             GL.createCapabilities();
 
-            kotak.drawLine();
             input();
             curve();
 
             // code
+//            kotak.drawLine();
+            for (Sphere planet : planets) {
+                planet.drawLine();
+            }
 //            for (Object2d object : objectsRectangle)
 //                object.draw();
 //

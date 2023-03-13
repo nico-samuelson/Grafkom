@@ -2,6 +2,7 @@ package Engine;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.windows.MOUSEINPUT;
 
@@ -101,7 +102,9 @@ public class Window {
         glfwShowWindow(window);
 
         mouseInput = new MouseInput(window);
+        GL.createCapabilities();
 
+        glEnable(GL_DEPTH_TEST);
     }
 
     public void update(){
