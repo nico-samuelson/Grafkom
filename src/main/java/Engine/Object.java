@@ -4,6 +4,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL30.*;
@@ -15,6 +16,24 @@ public class Object extends ShaderProgram {
     UniformsMap uniformsMap;
     Vector4f color;
     Matrix4f model;
+    List<Object> childObject;
+    Vector3f centerPoint;
+
+    public List<Object> getChildObject() {
+        return childObject;
+    }
+
+    public void setChildObject(List<Object> childObject) {
+        this.childObject = childObject;
+    }
+
+    public Vector3f getCenterPoint() {
+        return centerPoint;
+    }
+
+    public void setCenterPoint(Vector3f centerPoint) {
+        this.centerPoint = centerPoint;
+    }
 
     public Object(List<ShaderModuleData> shaderModuleDataList, List<Vector3f> vertices, Vector4f color) {
         super(shaderModuleDataList);
@@ -25,6 +44,7 @@ public class Object extends ShaderProgram {
         uniformsMap.createUniform("model");
         this.color = color;
         model = new Matrix4f().identity();
+        childObject = new ArrayList<>();
     }
 
     public Object(List<ShaderModuleData> shaderModuleDataList, List<Vector3f> vertices, List<Vector3f> verticesColor) {
@@ -102,6 +122,9 @@ public class Object extends ShaderProgram {
         glLineWidth(1);
         glPointSize(0);
         glDrawArrays(GL_LINE_STRIP, 0, vertices.size());
+        for (Object child : childObject) {
+            child.draw();
+        }
     }
 
     public void addVertices(Vector3f newVertices) {
@@ -122,13 +145,22 @@ public class Object extends ShaderProgram {
 
     public void translateObject(float offsetX, float offsetY, float offsetZ) {
         model = new Matrix4f().translate(offsetX, offsetY, offsetZ).mul(new Matrix4f(model));
+        for (Object child : childObject) {
+            child.translateObject(offsetX, offsetY, offsetZ);
+        }
     }
 
     public void rotateObject(float deg, float x, float y, float z) {
         model = new Matrix4f().rotate(deg, x, y, z).mul(new Matrix4f(model));
+        for (Object child : childObject) {
+            child.rotateObject(deg, x, y, z);
+        }
     }
 
     public void scaleObject(float scaleX, float scaleY, float scaleZ) {
         model = new Matrix4f().scale(scaleX, scaleY, scaleZ).mul(new Matrix4f(model));
+        for (Object child : childObject) {
+            child.scaleObject(scaleX, scaleY, scaleZ);
+        }
     }
 }

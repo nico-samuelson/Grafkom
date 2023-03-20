@@ -18,6 +18,7 @@ public class Sphere extends Circle {
         this.sectorCount = sectorCount;
         this.stackCount = stackCount;
         this.currAngle = 0;
+        createSphere();
     }
 
     public void createBox() {
@@ -266,5 +267,8 @@ public class Sphere extends Circle {
         // wajib
         // GL_LINE, GL_LINE_STRIP, GL_lINE_LOOP, GL_TRIANGLES, GL_TRIANGLE_FAN, GL_POINT -> YG SERING DIPAKAI
         glDrawArrays(GL_POLYGON, 0, vertices.size());
+        for (Object child : childObject) {
+            child.draw();
+        }
     }
 }

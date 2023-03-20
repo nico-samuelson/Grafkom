@@ -1,5 +1,6 @@
 import Engine.*;
 import Engine.Object;
+import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -25,6 +26,8 @@ public class Main {
     private ArrayList<Vector3f> center = new ArrayList<>();
     ArrayList<Sphere> planets = new ArrayList<>();
     Sphere kotak;
+
+    int countDegree = 0;
 
     public void init() {
         window.init();
@@ -64,9 +67,8 @@ public class Main {
                 .3f,
                 36, 18
         ));
-        planets.get(0).createSphere();
 
-        planets.add(new Sphere(
+        planets.get(0).getChildObject().add(new Sphere(
                 Arrays.asList(
                         new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
                         new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
@@ -75,16 +77,17 @@ public class Main {
                         List.of()
                 ),
                 new Vector4f(1, 1, 1, 1.0f),
-                new Vector3f(-0.4f, 0f, 0f),
+                new Vector3f(0f, 0f, 0f),
                 .05f,
                 .05f,
                 .05f,
                 36, 18
         ));
 
-        planets.get(1).createSphere();
+        planets.get(0).getChildObject().get(0).translateObject(-0.4f, 0, 0);
+        planets.get(0).getChildObject().get(0).setCenterPoint(new Vector3f(-0.4f, 0, 0));
 
-        planets.add(new Sphere(
+        planets.get(0).getChildObject().add(new Sphere(
                 Arrays.asList(
                         new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
                         new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
@@ -93,16 +96,17 @@ public class Main {
                         List.of()
                 ),
                 new Vector4f(1, 0.7f, 0, 1.0f),
-                new Vector3f(-0.55f, 0f, 0f),
+                new Vector3f(0f, 0f, 0f),
                 .05f,
                 .05f,
                 .05f,
                 36, 18
         ));
 
-        planets.get(2).createSphere();
+        planets.get(0).getChildObject().get(1).translateObject(-0.55f, 0, 0);
+        planets.get(0).getChildObject().get(1).setCenterPoint(new Vector3f(-0.55f, 0, 0));
 
-        planets.add(new Sphere(
+        planets.get(0).getChildObject().add(new Sphere(
                 Arrays.asList(
                         new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
                         new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
@@ -111,16 +115,17 @@ public class Main {
                         List.of()
                 ),
                 new Vector4f(0, 0, 1, 1.0f),
-                new Vector3f(-0.7f, 0f, 0f),
+                new Vector3f(0f, 0f, 0f),
                 .05f,
                 .05f,
                 .05f,
                 36, 18
         ));
 
-        planets.get(3).createSphere();
+        planets.get(0).getChildObject().get(2).translateObject(-0.7f, 0, 0);
+        planets.get(0).getChildObject().get(2).setCenterPoint(new Vector3f(-0.7f, 0, 0));
 
-        planets.add(new Sphere(
+        planets.get(0).getChildObject().add(new Sphere(
                 Arrays.asList(
                         new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
                         new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
@@ -129,16 +134,17 @@ public class Main {
                         List.of()
                 ),
                 new Vector4f(1, 0.7f, 0, 1.0f),
-                new Vector3f(-0.85f, 0f, 0f),
+                new Vector3f(0f, 0f, 0f),
                 .05f,
                 .05f,
                 .05f,
                 36, 18
         ));
 
-        planets.get(4).createSphere();
+        planets.get(0).getChildObject().get(3).translateObject(-0.85f, 0, 0);
+        planets.get(0).getChildObject().get(3).setCenterPoint(new Vector3f(-0.85f, 0, 0));
 
-        planets.add(new Sphere(
+        planets.get(0).getChildObject().get(2).getChildObject().add(new Sphere(
                 Arrays.asList(
                         new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
                         new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
@@ -147,14 +153,16 @@ public class Main {
                         List.of()
                 ),
                 new Vector4f(1, 0.7f, 0, 1.0f),
-                new Vector3f(-0.95f, 0f, 0f),
+                new Vector3f(0f, 0f, 0f),
                 .025f,
                 .025f,
                 .025f,
                 36, 18
         ));
 
-        planets.get(5).createSphere();
+        planets.get(0).getChildObject().get(2).getChildObject().get(0).translateObject(-0.7f, 0.1f, 0);
+        planets.get(0).getChildObject().get(2).getChildObject().get(0).setCenterPoint(new Vector3f(-0.7f, 0.1f, 0));
+
 
 //        planets.add(new Sphere(
 //                Arrays.asList(
@@ -436,36 +444,45 @@ public class Main {
     public void input() {
         // revolusi
         if (window.isKeyPressed(GLFW_KEY_F)) {
-            for (int i = 1; i < planets.size() - 1; i++)
-                planets.get(i).rotateObject((float)Math.toRadians(0.5f), 0, 0, 1);
+            for (int i = 0; i < planets.size(); i++) {
+                countDegree++;
+                planets.get(i).rotateObject(Math.toRadians(0.5f), 0, 0, 1);
+                for (Object child : planets.get(i).getChildObject()) {
+                    child.rotateObject(Math.toRadians(-countDegree * 0.5f), 0, 0, 1);
+                    child.translateObject(-child.getCenterPoint().x, -child.getCenterPoint().y, -child.getCenterPoint().z);
+                    child.rotateObject(1, 0, 0, 1);
+                    child.translateObject(child.getCenterPoint().x, child.getCenterPoint().y, child.getCenterPoint().z);
+                    child.rotateObject(Math.toRadians(countDegree * 0.5f), 0, 0, 1);
+                }
+            }
         }
 
         // rotasi
         if (window.isKeyPressed(GLFW_KEY_G)) {
             for (int i = 1; i < planets.size(); i++) {
                 planets.get(i).translateObject(
-                        -planets.get(i).centerPoint.x,
-                        -planets.get(i).centerPoint.y,
-                        -planets.get(i).centerPoint.z
+                        -planets.get(i).getCenterPoint().x,
+                        -planets.get(i).getCenterPoint().y,
+                        -planets.get(i).getCenterPoint().z
                 );
 
-                planets.get(i).rotateObject((float) Math.toRadians(0.5f), 0f, 1f, 0f);
-
-                planets.get(i).centerPoint.x = planets.get(i).radiusX * (float)(Math.cos(Math.toRadians(planets.get(i).currAngle)));
-                planets.get(i).centerPoint.y = planets.get(i).radiusY * (float)(Math.sin(Math.toRadians(planets.get(i).currAngle)));
-
-                if (planets.get(i).currAngle + 1 < 360)
-                    planets.get(i).currAngle++;
-                else
-                    planets.get(i).currAngle = 0;
-
-                System.out.println(planets.get(i).centerPoint);
-
-                planets.get(i).translateObject(
-                        planets.get(i).centerPoint.x,
-                        planets.get(i).centerPoint.y,
-                        planets.get(i).centerPoint.z
-                );
+//                planets.get(i).rotateObject((float) Math.toRadians(0.5f), 0f, 1f, 0f);
+//
+//                planets.get(i).centerPoint.x = planets.get(i).radiusX * (float)(Math.cos(Math.toRadians(planets.get(i).currAngle)));
+//                planets.get(i).centerPoint.y = planets.get(i).radiusY * (float)(Math.sin(Math.toRadians(planets.get(i).currAngle)));
+//
+//                if (planets.get(i).currAngle + 1 < 360)
+//                    planets.get(i).currAngle++;
+//                else
+//                    planets.get(i).currAngle = 0;
+//
+////                System.out.println(planets.get(i).centerPoint);
+//
+//                planets.get(i).translateObject(
+//                        planets.get(i).getCenterPoint().x,
+//                        planets.get(i).getCenterPoint().y,
+//                        planets.get(i).getCenterPoint().z
+//                );
             }
         }
 
@@ -588,10 +605,10 @@ public class Main {
                 float x = 0;
                 float y = 0;
 
-                for (int i = 0; i <= center.size()-1; i++) {
-                    x += (pascal.get(i) * center.get(i).x * Math.pow(1-t, (center.size()-1)-i) * Math.pow(t, i));
-                    y += (pascal.get(i) * center.get(i).y * Math.pow(1-t, (center.size()-1)-i) * Math.pow(t, i));
-                }
+//                for (int i = 0; i <= center.size()-1; i++) {
+//                    x += (pascal.get(i) * center.get(i).x * Math.pow(1-t, (center.size()-1)-i) * Math.pow(t, i));
+//                    y += (pascal.get(i) * center.get(i).y * Math.pow(1-t, (center.size()-1)-i) * Math.pow(t, i));
+//                }
                 points.add(new Vector3f(x, y, 0));
             }
 
@@ -616,9 +633,9 @@ public class Main {
             curve();
 
             // code
-//            kotak.drawLine();
+//            kotak.drawLine();ffffff
             for (Sphere planet : planets) {
-                planet.drawLine();
+                planet.draw();
             }
 //            for (Object2d object : objectsRectangle)
 //                object.draw();

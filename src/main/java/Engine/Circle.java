@@ -12,7 +12,6 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class Circle extends Object {
 
-    public Vector3f centerPoint;
     public float radiusX;
     public float radiusY;
 
